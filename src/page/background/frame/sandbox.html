@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<script>
+    'use strict';
+
+    const context = {};
+
+    // Restrict JavaScript codes running inside this sandbox.
+    (() => {
+        // All global objects are deleted, except the following objects.
+        const exceptions = new Set([
+            // Non-configurable
+            'undefined',
+            'window',
+            'document',
+            'location',
+            'top',
+            'eval',
+            'Infinity',
+            'NaN',
+            // Built-in objects
+            'isFinite',
+            'isNaN',
+            'parseFloat',
+            'parseInt',
+            'decodeURI',
+            'decodeURIComponent',
+            'encodeURI',
+            'encodeURIComponent',
+            'Object',
+            'Boolean',
+            'Error',
+            'EvalError',
+            'InternalError',
+            'RangeError',
+            'ReferenceError',
+            'SyntaxError',
+            'TypeError',
+            'URIError',
+            'Number',
+            'Math',
+            'Date',
+            'String',
+            'RegExp',
+            'Array',
+            'Int8Array',
+            'Uint8Array',
+            'Uint8ClampedArray',
+            'Int16Array',
+            'Uint16Array',
+            'Int32Array',
+            'Uint32Array',
+            'Float32Array',
+            'Float64Array',
+            'Map',
+            'Set',
+            'WeakMap',
+            'WeakSet',
+            'JSON',
+            'Promise',
+            // Window interface's objects
+            'crypto',
+            'parent',
+            'performance',
+            'atob',
+            'btoa',
+            'fetch',
+            // Other APIs
+            'XMLHttpRequest',
+        ]);
+        // 'window' inherits from 'EventTarget'
+        Array.prototype.concat.call(
+            Object.getOwnPropertyNames(window),
+            Object.getOwnPropertyNames(EventTarget.prototype)
+        ).forEach(property => {
+            try {
+                exceptions.has(property) || delete window[property];
+            } catch (error) {}
+        });
+    })();
+
+    /**
+     * The <const> keyword is used here to declare the function
+     *     so that the function won't become a window's object.
+     * @param {InterpreterFunctionDetails}
+     * @return {Promise}
+     * */
+    const run = async function ({functionBody, args = {}}) {
+        try {
+            // Arguments will be passed to the function via these parameters
+            const params = Object.keys(args);
+
+            // Restricted global objects
+            const restrictions = [
+                'window',
+                'document',
+                'location',
+                'top',
+                'parent',
+            ].filter(variable => !params.includes(variable));
+
+            // This makes sure the return value is cloneable
+            const result = await eval(
+                `async(${params.toString()})=>{`
+                + `let ${restrictions.toString()};`
+                + `${functionBody}`
+                + `}`
+            ).apply(null, params.map(param => args[param]));
+            if (result) {
+                return result;
+            } else {
+                return Promise.reject('No value was returned');
+            }
+        } catch (value) {
+            return Promise.reject(
+                // Some types may need converting to string
+                [Error, Date, RegExp].some(type => value instanceof type)
+                    ? String(value)
+                    : value || 'An unknown value was thrown'
+            );
+        }
+    };
+
+    (() => {
+        /**
+         * @param {!string} id
+         * @param {boolean} success
+         * @param {Object} response
+         * @return {void}
+         */
+        const sendResponse = (id, success, response) => {
+            parent.postMessage({
+                id,
+                success,
+                // This makes sure the response value is cloneable
+                response: JSON.parse(JSON.stringify(response)),
+            }, '*');
+        };
+
+        addEventListener('message', ({data}) => {
+            const {id, message} = data;
+            run(message).then(
+                result => sendResponse(id, true, result),
+                error => sendResponse(id, false, error)
+            );
+        });
+    })();
+</script>
+</body>
+</html>

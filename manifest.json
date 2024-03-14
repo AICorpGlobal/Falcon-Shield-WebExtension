@@ -1,0 +1,39 @@
+{
+  "manifest_version": 2,
+  "name": "Falcon-Shield-WebExtension",
+  "version": "0.0.0",
+  "description": "Watch Guard for protecting public from phishing attacks",
+  "developer": {
+    "name": "jazeem",
+    "url": "https://github.com/AICorpGlobal/Falcon-Shield-WebExt/"
+  },
+  "applications": {
+    "gecko": {
+      "id": "{ce509397-203a-4f0d-a5b0-927d0d1a0e22}"
+    }
+  },
+  "permissions": [
+    "<all_urls>",
+    "tabs",
+    "storage",
+    "unlimitedStorage",
+    "webNavigation",
+    "webRequest",
+    "webRequestBlocking"
+  ],
+  "icons": {
+    "64": "src/img/icon/mitm_on_64.png"
+  },
+  "browser_action": {
+    "default_icon": {
+      "32": "src/img/icon/mitm_on_32.png"
+    }
+  },
+  "background": {
+    "page": "src/page/background/background.html"
+  },
+  "options_ui": {
+    "page": "src/page/options/options.html",
+    "open_in_tab": true
+  }
+}

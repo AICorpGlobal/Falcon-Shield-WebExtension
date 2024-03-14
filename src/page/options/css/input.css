@@ -1,0 +1,174 @@
+article {
+    transition: margin 0.25s ease-out;
+}
+
+article > :first-child > input {
+    background-color: var(--yellow-1);
+}
+
+article.enabled > :first-child > input {
+    background-color: var(--green-1);
+}
+
+article:not(.active) {
+    display: flex;
+    cursor: pointer;
+}
+
+article:not(.active) > :first-child {
+    margin: 0 0.25em 0 0;
+}
+
+article:not(.active) > :first-child > label,
+article:not(.active) > :not(:first-of-type) {
+    display: none;
+}
+
+article:not(.active) > :first-child > input {
+    border-radius: 1.5em;
+    pointer-events: none;
+}
+
+article.active {
+    /* Create big gaps between active and inactive elements */
+    margin: 2em 0;
+}
+
+article.active > :first-child > label {
+    background-color: var(--yellow-0);
+    cursor: pointer;
+}
+
+article.active.enabled > :first-child > label {
+    background-color: var(--green-0);
+}
+
+.highlight-error {
+    background-color: var(--red-0);
+}
+
+.highlight-warning {
+    background-color: var(--yellow-0);
+}
+
+.highlight-ok {
+    background-color: var(--green-0);
+}
+
+label {
+    padding: 0.75em 1.25em;
+}
+
+input,
+select,
+button {
+    border-radius: 1.5em;
+    padding: 0.75em 1.25em;
+    background-color: var(--gray-1);
+}
+
+textarea {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    min-height: 4.5em;
+    background-color: inherit;
+}
+
+.input,
+.multiline-input {
+    display: flex;
+    min-width: 0;
+}
+
+.input > label,
+.multiline-input > label {
+    background-color: var(--gray-0);
+}
+
+.input {
+    width: 100%;
+}
+
+.input > label {
+    border-radius: 1.5em 0 0 1.5em;
+    white-space: nowrap;
+}
+
+.input > input,
+.input > select {
+    flex-grow: 1;
+    border-radius: 0 1.5em 1.5em 0;
+}
+
+.multiline-input {
+    flex-direction: column;
+}
+
+.multiline-input > label {
+    display: block;
+    border-radius: 1.5em 1.5em 0 0;
+}
+
+.textarea {
+    margin: 0;
+    border-radius: 0 0 1.5em 1.5em;
+    padding: 0.75em 1.25em;
+    background-color: var(--gray-1);
+}
+
+.switch {
+    /* Just like a button */
+    display: inline-block;
+    position: relative;
+    width: 7.5em;
+}
+
+.switch::after {
+    display: inline-block;
+    content: '';
+}
+
+.switch > input {
+    display: none;
+}
+
+.slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 1.5em;
+    background-color: var(--yellow-0);
+    cursor: pointer;
+}
+
+.slider > span {
+    position: absolute;
+    left: 0.25em;
+    bottom: 0.25em;
+    width: 5.75em;
+    border-radius: 1.25em;
+    padding: 0.5em 1em;
+    background-color: var(--yellow-1);
+    text-align: center;
+    transition: transform 0.25s ease-out;
+}
+
+input:checked + .slider {
+    background-color: var(--green-0);
+}
+
+input:checked + .slider > span {
+    background-color: var(--green-1);
+    transform: translateX(1.25em);
+}
+
+input:checked + .slider > span > :first-child {
+    display: none;
+}
+
+input:not(:checked) + .slider > span > :last-child {
+    display: none;
+}
